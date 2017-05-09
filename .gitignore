@@ -17,6 +17,7 @@ changelog.md
 !/info
 !/info/
 !/build.gradle
+!/project.gradle
 !/settings.gradle
 !/gradle.properties
 !/gradlew

@@ -28,19 +28,9 @@ plugins {
 
 apply plugin: project.forgegradle_plugin
 
-repositories {
-    maven {
-        name = 'CurseForge'
-        url = 'https://minecraft.curseforge.com/api/maven/'
-    }
-}
-
 project.metaClass.isProperty = { propName ->
     return delegate.hasProperty(propName)&&!delegate.property(propName).isEmpty()
 }
-
-sourceCompatibility='1.6'
-targetCompatibility='1.6'
 
 jar {
     classifier = project.hasProperty('extra_classifier') ? project.extra_classifier : 'universal'
@@ -48,45 +38,41 @@ jar {
 
 // check libs directory and generate build number if version_qualifier supplied
 group = project.group
-def modver = "${project.version_major}.${project.version_minor}.${project.version_patch}"
+ext.modstaticversion = ext.modversion = "${project.version_major}.${project.version_minor}.${project.version_patch}"
 if (project.isProperty('version_qualifier')) {
     // auto increase type : hasmicro=meta build number, nomicro=micro number
-    def micro = project.isProperty('version_micro')
-    def nbuild = micro?1:0
+    def ismicro = false
+    ext.modbuild = 0
+    if (project.isProperty('version_micro')) {
+        ismicro = true
+        modbuild = 1
+    }
     while (true) {
-        if (micro) {
-            ext.build = String.format('%03d', nbuild)
-            ext.modversion = "${modver}-${project.version_qualifier}.${project.version_micro}+${build}"
+        if (ismicro) {
+            modversion = "${modstaticversion}-${project.version_qualifier}.${project.version_micro}+" + String.format('%03d', modbuild)
         } else {
-            ext.build = nbuild
-            ext.modversion = "${modver}-${project.version_qualifier}"
-            if (nbuild>0)
-                ext.modversion = "${modversion}.${build}"
+            modversion = "${modstaticversion}-${project.version_qualifier}"
+            if (modbuild>0)
+                modversion = "${modversion}.${modbuild}"
         }
         version = "${project.version_minecraft}-${modversion}"
         if (!jar.outputs.files.any { file -> file.exists() })
             break
-        nbuild++
+        modbuild++
     }
 } else {
-    ext.modversion = modver
     version = "${project.version_minecraft}-${modversion}"
 }
 logger.lifecycle('Output File: ' + jar.outputs.files.getAsPath())
-
-[compileJava, compileApiJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-idea {
-    module {
-        downloadSources = true
-        inheritOutputDirs = true
-    }
-}
 
 configurations {
     shade
     compile.extendsFrom shade
 }
+
+[compileJava, compileApiJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceCompatibility='1.6'
+targetCompatibility='1.6'
 
 minecraft {
     version = "${project.version_minecraft}-${project.version_forge}"
@@ -133,12 +119,30 @@ processResources {
     }
 }
 
+repositories {
+    maven {
+        name = 'CurseForge'
+        url = 'https://minecraft.curseforge.com/api/maven/'
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        inheritOutputDirs = true
+    }
+}
+
 dependencies {
-    shade ('org.apache.httpcomponents:httpmime:4.3.3') { transitive=false }
     shade fileTree(dir: 'libs/shade', include: '*.jar')
 }
 
-def commonManifest = {
+ext.commonManifest = {}
+
+if (file('project.gradle').exists())
+    apply from: 'project.gradle'
+
+commonManifest = commonManifest << {
     if (project.isProperty('extra_fmlcore'))
         attributes 'FMLCorePlugin': project.extra_fmlcore
     if (project.isProperty('extra_fmlmod'))
@@ -150,6 +154,7 @@ def commonManifest = {
 jar {
     from sourceSets.api.output
     manifest commonManifest
+    enabled = false
 }
 
 // println(shadowJar.getSource().getFiles())
@@ -157,7 +162,6 @@ shadowJar {
     configurations = [project.configurations.shade]
     from sourceSets.main.output
     from sourceSets.api.output
-    relocate 'org.apache.http.entity.mime', 'net.teamfruit.lib.apache.http.entity.mime'
     classifier = jar.classifier
     manifest commonManifest
 }
@@ -252,8 +256,6 @@ if (project.isProperty('extra_changelog_location')) {
     textChangelog = fileChangelog.exists()?fileChangelog.getText('UTF-8'):''
 }
 def pre = project.isProperty('version_qualifier')
-
-println(project.isProperty('extra_curseforge_id'))
 
 if (project.isProperty('api_key_curseforge') && project.isProperty('extra_curseforge_id')) {
     curseforge {
