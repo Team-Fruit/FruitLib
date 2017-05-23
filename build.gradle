@@ -117,6 +117,7 @@ processResources {
 }
 
 repositories {
+    jcenter()
     maven {
         name = 'CurseForge'
         url = 'https://minecraft.curseforge.com/api/maven/'
@@ -238,20 +239,26 @@ task signJars(dependsOn: 'build') {
         enabled = false
 }
 
-def deploy_loc_name = "deploy_location_${project.version_minecraft}"
+def deploy_loc_name_primary = "deploy_location_${project.name}_${project.version_minecraft}"
+def deploy_loc_name_secondary = "deploy_location_${project.version_minecraft}"
 task deploy(dependsOn: 'build', type: Copy) {
     mustRunAfter 'signJars'
 
-    if (project.isProperty('deploy_name') && project.isProperty(deploy_loc_name)) {
-        def name = project.deploy_name
-        def destlocname = project.property(deploy_loc_name)
-        def destlocdir = project.file(destlocname)
+	def deploy_loc
+	if (project.isProperty(deploy_loc_name_primary))
+		deploy_loc = project.property(deploy_loc_name_primary)
+	else if (project.isProperty(deploy_loc_name_secondary))
+		deploy_loc = project.property(deploy_loc_name_secondary)
+
+    if (project.isProperty('deploy_name') && deploy_loc!=null) {
+	    def deploy_name = project.deploy_name
+        def destlocdir = file(deploy_loc)
 
         from project.tasks.shadowJar.outputs.files.singleFile
         into destlocdir
 
         rename { String fileName ->
-            fileName = name
+            fileName = deploy_name
         }
 
         eachFile { file ->
