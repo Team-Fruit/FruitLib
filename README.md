@@ -1,4 +1,4 @@
-[![Latest Tag](https://img.shields.io/github/tag/Team-Fruit/FruitLib.svg?label=Latest Tag&style=flat)](https://github.com/Team-Fruit/FruitLib/tags) [![Latest Release](https://img.shields.io/github/release/Team-Fruit/FruitLib.svg?label=Latest Release&style=flat)](https://github.com/Team-Fruit/FruitLib/releases)
+[![Latest Tag](https://img.shields.io/github/tag/Team-Fruit/FruitLib.svg?label=Latest%20Tag&style=flat)](https://github.com/Team-Fruit/FruitLib/tags) [![Latest Release](https://img.shields.io/github/release/Team-Fruit/FruitLib.svg?label=Latest%20Release&style=flat)](https://github.com/Team-Fruit/FruitLib/releases)
 
 # FruitLib
 ![Minecraft 1.7.10](https://img.shields.io/badge/Minecraft-1.7.10-yellow.svg?style=flat)
