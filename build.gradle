@@ -162,6 +162,9 @@ if (!reobf.hasProperty('dependsOn')) {
     reobf {
         shadowJar { mappingType = 'SEARGE' }
     }
+    reobfJar {
+        enabled = false
+    }
     reobfShadowJar {
         mustRunAfter 'shadowJar'
     }
@@ -262,7 +265,7 @@ task deploy(dependsOn: 'build', type: Copy) {
         }
 
         eachFile { file ->
-            def path = file.relativePath.getFile(destlocdir) 
+            def path = file.relativePath.getFile(destlocdir)
             logger.lifecycle "copying to ${path}"
         }
     } else

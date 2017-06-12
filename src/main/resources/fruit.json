@@ -1,0 +1,11 @@
+{
+	"id": "fruitlib",
+	"version": "1.0.0",
+	"dependencies": [
+		{
+			"id": "fruitdep1",
+			"version": "1.0.0",
+			"url": "E:\\softdata\\git\\Dependency\\run\dep\\fruitdep1.zip"
+		}
+	]
+}
