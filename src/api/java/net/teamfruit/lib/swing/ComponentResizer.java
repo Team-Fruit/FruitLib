@@ -1,4 +1,4 @@
-package net.teamfruit.lib.util;
+package net.teamfruit.lib.swing;
 
 import java.awt.Component;
 import java.awt.Cursor;

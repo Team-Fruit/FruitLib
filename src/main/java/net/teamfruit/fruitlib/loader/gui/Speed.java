@@ -23,6 +23,9 @@ public class Speed {
 	private long oldTime;
 	private final int averagesize;
 
+	private int lastcount;
+	private int lasttime;
+
 	private Queue<Integer> aveCount;
 	private Queue<Integer> aveTime;
 
@@ -39,22 +42,28 @@ public class Speed {
 	/**
 	 * 情報を更新します
 	 * @param count 前回との差
-	 * @return this
 	 */
-	public CurrentSpeed create(final int count) {
+	public Speed update(final int count) {
 		// get current time
 		final long newTime = System.nanoTime();
 
 		final int lastTime = (int) (newTime-this.oldTime);
 
 		// update count
-		this.aveCount.add(count);
-		this.aveTime.add(lastTime);
+		this.aveCount.add(this.lastcount = count);
+		this.aveTime.add(this.lasttime = lastTime);
 
 		// reset
 		this.oldTime = newTime;
 
-		return new CurrentSpeed(count, lastTime, this.aveCount.size()>this.averagesize/4 ? average(this.aveCount) : -1, this.aveTime.size()>this.averagesize/4 ? average(this.aveTime) : -1, Collections.max(this.aveCount), Collections.max(this.aveTime));
+		return this;
+	}
+
+	public CurrentSpeed getSample() {
+		return new CurrentSpeed(this.lastcount, this.lasttime,
+				this.aveCount.size()>this.averagesize/4 ? average(this.aveCount) : -1,
+				this.aveTime.size()>this.averagesize/4 ? average(this.aveTime) : -1,
+				Collections.max(this.aveCount), Collections.max(this.aveTime));
 	}
 
 	/**

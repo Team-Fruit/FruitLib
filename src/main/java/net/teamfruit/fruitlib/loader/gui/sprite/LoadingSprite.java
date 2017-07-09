@@ -1,4 +1,4 @@
-package net.teamfruit.fruitlib.loader.gui;
+package net.teamfruit.fruitlib.loader.gui.sprite;
 
 import java.awt.Color;
 import java.awt.Dimension;

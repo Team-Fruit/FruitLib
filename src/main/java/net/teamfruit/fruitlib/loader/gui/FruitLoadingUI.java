@@ -23,6 +23,12 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class FruitLoadingUI {
 
+	private final LoaderUIController controller = new LoaderUIController();
+
+	public LoaderUIController getController() {
+		return this.controller;
+	}
+
 	private JFrame frmFruitloaderDownloading;
 
 	/**
@@ -56,14 +62,16 @@ public class FruitLoadingUI {
 		this.frmFruitloaderDownloading = new JFrame();
 		this.frmFruitloaderDownloading.setIconImage(Toolkit.getDefaultToolkit().getImage(FruitLoadingUI.class.getResource("/assets/fruitlib/textures/icon.png")));
 		this.frmFruitloaderDownloading.setTitle("FruitLoader - Downloading");
-		this.frmFruitloaderDownloading.setBounds(100, 100, 663, 481);
+		this.frmFruitloaderDownloading.setSize(750, 500);
+		this.frmFruitloaderDownloading.setMinimumSize(new Dimension(750, 500));
+		this.frmFruitloaderDownloading.setLocationRelativeTo(null);
 		this.frmFruitloaderDownloading.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		final JPanel application = new JPanel();
 		this.frmFruitloaderDownloading.getContentPane().add(application, BorderLayout.CENTER);
 		application.setLayout(new BorderLayout(0, 0));
 
-		final LoadingProgress progress = new LoadingProgress();
+		final LoadingProgress progress = new LoadingProgress(this.controller);
 		application.add(progress, BorderLayout.NORTH);
 
 		final JPanel contents = new JPanel();
@@ -71,7 +79,7 @@ public class FruitLoadingUI {
 		application.add(contents, BorderLayout.CENTER);
 		contents.setLayout(new LayeredLayout());
 
-		final LoadingContents scrollcontent = new LoadingContents();
+		final LoadingContents scrollcontent = new LoadingContents(this.controller);
 		scrollcontent.setOpaque(false);
 
 		final JScrollPane scrollpane = new JScrollPane(scrollcontent);

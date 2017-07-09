@@ -17,9 +17,14 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
+import com.google.common.eventbus.Subscribe;
+
+import net.teamfruit.fruitlib.loader.gui.LoaderUIController.TotalSetEvent;
 import net.teamfruit.fruitlib.loader.gui.Speed.CurrentSpeed;
 
 public class LoadingProgress extends JPanel {
+	private LoaderUIController controller;
+
 	private DetailsGraph graph_detail;
 
 	private JLabel max_speed;
@@ -32,13 +37,13 @@ public class LoadingProgress extends JPanel {
 
 	private JLabel labelTotal0;
 
-	private Speed speed = new Speed(20);
 	private Random random = new Random();
 
 	private Timer timer = new Timer((int) TimeUnit.SECONDS.toMillis(2), new ActionListener() {
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final CurrentSpeed currentSpeed = LoadingProgress.this.speed.create(LoadingProgress.this.random.nextInt(1000));
+			LoadingProgress.this.controller.getSpeed().update(LoadingProgress.this.random.nextInt(100000));
+			final CurrentSpeed currentSpeed = LoadingProgress.this.controller.getSpeed().getSample();
 			LoadingProgress.this.graph_detail.addSpeed(currentSpeed).repaint();
 			final int max = SizeUnit.SPEED.getMeasure(Math.max(Collections.max(LoadingProgress.this.graph_detail.getShownSpeed()), Collections.max(LoadingProgress.this.graph_detail.getShownAverageSpeed())));
 			LoadingProgress.this.max_speed.setText(SizeUnit.SPEED.getFormatSizeString(max, 0));
@@ -51,15 +56,25 @@ public class LoadingProgress extends JPanel {
 			final double maxspeed = currentSpeed.getMaxByteSpeed();
 			if (maxspeed>=0)
 				LoadingProgress.this.labelMaxNetwork0.setText(SizeUnit.STORAGE.getFormatSizeString(maxspeed, 1)+"/s");
-			LoadingProgress.this.labelTotal0.setText(SizeUnit.STORAGE.getFormatSizeString(0, 1));
 			LoadingProgress.this.timer.start();
 		}
 	});
 
+	@Subscribe
+	public void setTotal(final TotalSetEvent event) {
+		final long bytes = event.bytes;
+		if (bytes>=0)
+			LoadingProgress.this.labelTotal0.setText(SizeUnit.STORAGE.getFormatSizeString(bytes, 1));
+	}
+
 	/**
 	 * Create the panel.
+	 * @param controller
 	 */
-	public LoadingProgress() {
+	public LoadingProgress(final LoaderUIController controller) {
+		this.controller = controller;
+		controller.EVENT_BUS.register(this);
+
 		final JPanel progress = this;
 		progress.setBackground(new Color(0x0c1b26));
 		progress.setBorder(new EmptyBorder(0, 0, 15, 0));

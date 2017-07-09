@@ -1,4 +1,4 @@
-package net.teamfruit.fruitlib.loader.gui;
+package net.teamfruit.fruitlib.loader.gui.sprite;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
-import net.teamfruit.lib.util.ComponentMover;
+import net.teamfruit.lib.swing.ComponentMover;
 
 public class FruitLoadingSpriteUI {
 

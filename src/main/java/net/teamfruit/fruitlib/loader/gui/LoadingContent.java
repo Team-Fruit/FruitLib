@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -29,7 +30,17 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
-public class LoadingContent extends JPanel {
+import net.teamfruit.fruitlib.loader.gui.LoaderUIController.LoadingContentController;
+
+public class LoadingContent extends JPanel implements LoadingContentController {
+	private JLabel progress_1_value;
+	private JLabel progress_2_value;
+	private JLabel progress_3_value;
+	private JLabel progress_4_value;
+	private boolean isPause;
+	private JLabel title_1;
+	private FitImage image_1;
+	private JProgressBar progressBar;
 
 	/**
 	 * Create the panel.
@@ -82,13 +93,13 @@ public class LoadingContent extends JPanel {
 		thumbnail.add(image_wrap);
 		image_wrap.setLayout(new BorderLayout(0, 0));
 
-		final FitImage image = new FitImage();
+		this.image_1 = new FitImage();
 		/*try {
 			image.setImage(new ImageIcon(new URL("https://i.gyazo.com/91bc578643d91a11f259f3e258a47ad9.png")).getImage());
 		} catch (final MalformedURLException e1) {
 			e1.printStackTrace();
 		}*/
-		image_wrap.add(image);
+		image_wrap.add(this.image_1);
 		status.setLayout(new BorderLayout(0, 0));
 
 		final JPanel s_left = new JPanel();
@@ -110,7 +121,12 @@ public class LoadingContent extends JPanel {
 		s_left.add(progress_wrap, gbc_progress_wrap);
 		progress_wrap.setLayout(new BoxLayout(progress_wrap, BoxLayout.Y_AXIS));
 
-		final JPanel progress_1 = new JPanel();
+		final JPanel progress_1 = new JPanel() {
+			@Override
+			public boolean isVisible() {
+				return !LoadingContent.this.progress_1_value.getText().isEmpty();
+			}
+		};
 		progress_1.setOpaque(false);
 		progress_1.setAlignmentX(Component.LEFT_ALIGNMENT);
 		progress_wrap.add(progress_1);
@@ -121,12 +137,17 @@ public class LoadingContent extends JPanel {
 		progress_1_lbl.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
 		progress_1_lbl.setForeground(new Color(0x6f6f6f));
 
-		final JLabel progress_1_value = new JLabel("87.8MB / 820.5MB");
-		progress_1.add(progress_1_value);
-		progress_1_value.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
-		progress_1_value.setForeground(Color.WHITE);
+		this.progress_1_value = new JLabel("87.8MB / 820.5MB");
+		progress_1.add(this.progress_1_value);
+		this.progress_1_value.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
+		this.progress_1_value.setForeground(Color.WHITE);
 
-		final JPanel progress_2 = new JPanel();
+		final JPanel progress_2 = new JPanel() {
+			@Override
+			public boolean isVisible() {
+				return !LoadingContent.this.progress_2_value.getText().isEmpty();
+			}
+		};
 		progress_2.setOpaque(false);
 		progress_2.setAlignmentX(Component.LEFT_ALIGNMENT);
 		progress_wrap.add(progress_2);
@@ -137,12 +158,17 @@ public class LoadingContent extends JPanel {
 		progress_2_lbl.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
 		progress_2.add(progress_2_lbl);
 
-		final JLabel progress_2_value = new JLabel("8:52");
-		progress_2_value.setForeground(Color.WHITE);
-		progress_2_value.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
-		progress_2.add(progress_2_value);
+		this.progress_2_value = new JLabel("8:52");
+		this.progress_2_value.setForeground(Color.WHITE);
+		this.progress_2_value.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
+		progress_2.add(this.progress_2_value);
 
-		final JPanel progress_3 = new JPanel();
+		final JPanel progress_3 = new JPanel() {
+			@Override
+			public boolean isVisible() {
+				return !LoadingContent.this.progress_3_value.getText().isEmpty();
+			}
+		};
 		progress_3.setOpaque(false);
 		progress_3.setAlignmentX(Component.LEFT_ALIGNMENT);
 		progress_wrap.add(progress_3);
@@ -153,10 +179,48 @@ public class LoadingContent extends JPanel {
 		progress_3_lbl.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
 		progress_3.add(progress_3_lbl);
 
-		final JLabel progress_3_value = new JLabel("3 時間 24 分");
-		progress_3_value.setForeground(Color.WHITE);
-		progress_3_value.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
-		progress_3.add(progress_3_value);
+		this.progress_3_value = new JLabel("3 時間 24 分");
+		this.progress_3_value.setForeground(Color.WHITE);
+		this.progress_3_value.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
+		progress_3.add(this.progress_3_value);
+
+		final JPanel progress_4 = new JPanel() {
+			@Override
+			public boolean isVisible() {
+				return !LoadingContent.this.progress_4_value.getText().isEmpty();
+			}
+		};
+		progress_4.setOpaque(false);
+		progress_4.setAlignmentX(Component.LEFT_ALIGNMENT);
+		progress_wrap.add(progress_4);
+		progress_4.setLayout(new BoxLayout(progress_4, BoxLayout.X_AXIS));
+
+		final JLabel progress_4_lbl = new JLabel("完了した時間  ");
+		progress_4_lbl.setForeground(new Color(111, 111, 111));
+		progress_4_lbl.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
+		progress_4.add(progress_4_lbl);
+
+		this.progress_4_value = new JLabel("11:29");
+		this.progress_4_value.setForeground(Color.WHITE);
+		this.progress_4_value.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
+		progress_4.add(this.progress_4_value);
+
+		final JPanel progress_5 = new JPanel() {
+			@Override
+			public boolean isVisible() {
+				return LoadingContent.this.isPause;
+			}
+		};
+		progress_5.setOpaque(false);
+		progress_5.setAlignmentX(Component.LEFT_ALIGNMENT);
+		progress_wrap.add(progress_5);
+		progress_5.setLayout(new BoxLayout(progress_5, BoxLayout.X_AXIS));
+
+		final JLabel progress_5_lbl = new JLabel("一時停止");
+		progress_5_lbl.setForeground(new Color(111, 111, 111));
+		progress_5_lbl.setFont(new Font("Yu Gothic UI", Font.PLAIN, 12));
+		progress_5.add(progress_5_lbl);
+
 		information.setLayout(new BorderLayout(0, 0));
 
 		final JPanel i_left = new JPanel();
@@ -164,32 +228,41 @@ public class LoadingContent extends JPanel {
 		information.add(i_left, BorderLayout.WEST);
 		i_left.setLayout(new BorderLayout(0, 0));
 
+		final JPanel i_left_top = new JPanel();
+		i_left_top.setOpaque(false);
+		i_left.add(i_left_top, BorderLayout.NORTH);
+		i_left_top.setLayout(new BorderLayout(0, 0));
+
 		final JPanel title_wrap = new JPanel();
+		i_left_top.add(title_wrap, BorderLayout.NORTH);
 		title_wrap.setOpaque(false);
-		i_left.add(title_wrap);
 		title_wrap.setLayout(new BoxLayout(title_wrap, BoxLayout.Y_AXIS));
 
-		final JLabel title = new JLabel("SignPicture");
-		title.setFont(new Font("Yu Gothic UI", Font.PLAIN, 16));
-		title.setForeground(Color.WHITE);
-		title_wrap.add(title);
+		this.title_1 = new JLabel("SignPicture");
+		this.title_1.setFont(new Font("Yu Gothic UI", Font.PLAIN, 16));
+		this.title_1.setForeground(Color.WHITE);
+		title_wrap.add(this.title_1);
 
-		final JPanel progress = new JPanel();
+		final JPanel progress = new JPanel() {
+			@Override
+			public boolean isVisible() {
+				return LoadingContent.this.progressBar.getMaximum()>0;
+			}
+		};
 		progress.setAlignmentX(Component.LEFT_ALIGNMENT);
 		progress.setBorder(new EmptyBorder(5, 0, 5, 0));
 		progress.setOpaque(false);
 		title_wrap.add(progress);
 		progress.setLayout(new BorderLayout(0, 0));
 
-		final JProgressBar progressBar = new JProgressBar();
-		progressBar.setBorder(new EmptyBorder(0, 0, 0, 0));
-		progressBar.setPreferredSize(new Dimension(120, 3));
-		progressBar.setBackground(Color.BLACK);
-		progressBar.setForeground(new Color(0x1e4266));
-		progressBar.setUI(new MyProgressUI());
-		progressBar.setMaximum(100);
-		progressBar.setValue(60);
-		progress.add(progressBar, BorderLayout.NORTH);
+		this.progressBar = new JProgressBar();
+		this.progressBar.setBorder(new EmptyBorder(0, 0, 0, 0));
+		this.progressBar.setPreferredSize(new Dimension(120, 3));
+		this.progressBar.setBackground(Color.BLACK);
+		this.progressBar.setForeground(new Color(0x1e4266));
+		this.progressBar.setUI(new MyProgressUI());
+		this.progressBar.setMaximum(0);
+		progress.add(this.progressBar, BorderLayout.NORTH);
 		final GridBagLayout gbl_controls = new GridBagLayout();
 		gbl_controls.columnWidths = new int[] { 0, 0, 0 };
 		gbl_controls.rowHeights = new int[] { 0, 0, 0 };
@@ -272,5 +345,109 @@ public class LoadingContent extends JPanel {
 			g.setColor(this.progressBar.getForeground());
 			g.fillOval(this.r.x, this.r.y, this.r.width, this.r.height);
 		}
+	}
+
+	@Override
+	public LoadingContent getInternalContent() {
+		return this;
+	}
+
+	@Override
+	public void setTitle(final String title) {
+		this.title_1.setText(title);
+	}
+
+	@Override
+	public String getTitle() {
+		return this.title_1.getText();
+	}
+
+	@Override
+	public void setImage(final Image image) {
+		this.image_1.setImage(image);
+	}
+
+	@Override
+	public Image getImage() {
+		return this.image_1.getImage();
+	}
+
+	@Override
+	public void setProgressMaximum(final int maximum) {
+		this.progressBar.setMaximum(maximum);
+		updateProgressText();
+	}
+
+	@Override
+	public int getProgressMaximum() {
+		return this.progressBar.getMaximum();
+	}
+
+	@Override
+	public void setProgressValue(final int value) {
+		this.progressBar.setValue(value);
+		updateProgressText();
+	}
+
+	@Override
+	public int getProgressValue() {
+		return this.progressBar.getValue();
+	}
+
+	private void updateProgressText() {
+		final int max = this.progressBar.getMaximum();
+		if (max<=0) {
+			this.progress_1_value.setText("");
+			return;
+		}
+		final int value = this.progressBar.getValue();
+		final String text = SizeUnit.STORAGE.getFormatSizeString(value, 1)+" / "+SizeUnit.STORAGE.getFormatSizeString(max, 1);
+		this.progress_1_value.setText(text);
+	}
+
+	@Override
+	public void setPause(final boolean pause) {
+		this.isPause = pause;
+	}
+
+	@Override
+	public boolean isPause() {
+		return this.isPause;
+	}
+
+	@Override
+	public void setStartedTime(final String time) {
+		// TODO 自動生成されたメソッド・スタブ
+
+	}
+
+	@Override
+	public String getStartedTime() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	@Override
+	public void setRemainingTime(final String time) {
+		// TODO 自動生成されたメソッド・スタブ
+
+	}
+
+	@Override
+	public String getRemainingTime() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	@Override
+	public void setDoneTime(final String time) {
+		// TODO 自動生成されたメソッド・スタブ
+
+	}
+
+	@Override
+	public String getDoneTime() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
 	}
 }
