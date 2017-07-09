@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
 public class ComponentMover extends MouseAdapter {
 	private Insets dragInsets = new Insets(0, 0, 0, 0);
 	private Dimension snapSize = new Dimension(1, 1);
-	private Insets edgeInsets = new Insets(0, 0, 0, 0);
+	private Insets edgeInsets = null;
 	private boolean changeCursor = true;
 	private boolean autoLayout = false;
 

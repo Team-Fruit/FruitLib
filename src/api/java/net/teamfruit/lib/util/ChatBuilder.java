@@ -94,6 +94,7 @@ public class ChatBuilder {
 	}
 
 	public @Nonnull ChatBuilder setText(final @Nonnull String text) {
+		// TODO Multiple Lines
 		this.text = text;
 		return this;
 	}

@@ -179,7 +179,7 @@ public class AtlasGenerator {
 	}
 
 	public class Texture {
-		private class Node {
+		class Node {
 			public Rectangle overall;
 			public int maxHeight;
 			public Rectangle rect;
@@ -208,7 +208,7 @@ public class AtlasGenerator {
 			}
 		}
 
-		private class Node2 {
+		class Node2 {
 			public Rectangle rect;
 			private Node2 child[];
 			public BufferedImage image;

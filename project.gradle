@@ -1,5 +1,6 @@
 dependencies {
     shade ('org.apache.httpcomponents:httpmime:4.3.3') { transitive=false }
+    testCompile ('junit:junit:4.4')
 }
 
 shadowJar {
